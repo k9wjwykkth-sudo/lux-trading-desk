@@ -48,6 +48,8 @@
       let rejected = 0;
       let closed = 0;
       let signals = 0;
+      let signalDetails = [];
+      
 
       for (let i = 0; i < 45; i++) {
         let price;
@@ -72,6 +74,15 @@
           accepted++;
           closed += result.closedCandles.length;
           signals += result.actionableSignals.length;
+          result.actionableSignals.forEach(signal => {
+  signalDetails.push({
+    action: signal.action,
+    instrument: signal.instrumentId,
+    entry: signal.entryPrice,
+    stopLoss: signal.stopLoss,
+    target: signal.target
+  });
+});
         } else {
           rejected++;
         }
@@ -94,7 +105,9 @@
         "Trading signals: " + signals + "\n" +
         "Dashboard notifications: " +
         notificationData.notifications.length + "\n\n" +
-        "Mode: PAPER ONLY";
+        "SIGNAL DETAILS\n" +
+JSON.stringify(signalDetails, null, 2) +
+"\n\nMode: PAPER ONLY";
     });
   </script>
 </body>
