@@ -2,28 +2,15 @@ const topRight = document.querySelector(".topright");
 
 const button = document.createElement("button");
 button.className = "btn primary";
-button.textContent = "Loading PAPER Pipeline…";
+button.textContent = "Run PAPER Pipeline";
 button.id = "runPaperPipeline";
-button.disabled = true;
 
 if (topRight) {
   topRight.appendChild(button);
-} else {
-  console.error('LUX PAPER pipeline: ".topright" dashboard container was not found.');
-}
-
-function showStartupError(error) {
-  const message = error instanceof Error ? error.message : String(error);
-  button.textContent = "PAPER Pipeline unavailable";
-  button.disabled = true;
-  button.title = message;
-  console.error("LUX PAPER pipeline failed to load:", error);
 }
 
 import("./lux-market-pipeline.js")
   .then(({ luxMarketPipeline }) => {
-    button.textContent = "Run PAPER Pipeline";
-    button.disabled = false;
 
     button.addEventListener("click", () => {
       let accepted = 0;
@@ -31,8 +18,9 @@ import("./lux-market-pipeline.js")
       let closed = 0;
       let signals = 0;
 
-      const instrument = "LUX-DASH-DEMO";
-      const baseTime = 1800000000000;
+      const instrument = "LUX-TEST-" + Date.now();
+      const baseTime = Math.floor(Date.now() / 60000) * 60000;
+      const rejectionReasons = {};
 
       for (let i = 0; i < 45; i++) {
         let price;
@@ -55,10 +43,13 @@ import("./lux-market-pipeline.js")
 
         if (result.accepted) {
           accepted++;
-          closed += result.closedCandles.length;
-          signals += result.actionableSignals.length;
+          closed += result.closedCandles?.length ?? 0;
+          signals += result.actionableSignals?.length ?? 0;
         } else {
           rejected++;
+          const reason = result.reason || "unknown";
+          rejectionReasons[reason] =
+            (rejectionReasons[reason] || 0) + 1;
         }
       }
 
@@ -68,10 +59,13 @@ import("./lux-market-pipeline.js")
         "Rejected ticks: " + rejected + "\n" +
         "Closed candles: " + closed + "\n" +
         "Trading signals: " + signals + "\n\n" +
+        "Rejection details: " +
+        JSON.stringify(rejectionReasons) + "\n\n" +
         "Mode: PAPER ONLY";
 
       document.getElementById("decision").textContent =
         signals > 0 ? "SIGNAL GENERATED" : "WAIT";
+
       document.getElementById("decisionText").textContent = report;
       document.getElementById("chiefStatus").textContent = "PAPER TEST DONE";
       document.getElementById("chiefStatus").className = "status active";
@@ -80,6 +74,7 @@ import("./lux-market-pipeline.js")
       document.getElementById("target").textContent = "PAPER";
 
       const activity = document.getElementById("activity");
+
       if (activity) {
         const item = document.createElement("div");
         item.className = "activity";
@@ -88,4 +83,7 @@ import("./lux-market-pipeline.js")
       }
     });
   })
-  .catch(showStartupError);
+  .catch(error => {
+    button.textContent = "Pipeline unavailable";
+    console.error("LUX pipeline error:", error);
+  });
