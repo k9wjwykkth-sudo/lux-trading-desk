@@ -8,7 +8,7 @@ import { luxNotifications } from "./dashboard-notifications.js";
 
 import {
   luxSignalEngine
-} from "../market-data/src/market-data/signal-engine.js";
+} from "../market-data/src/market-data/signal-engine.js?v=4";
 
 export class SignalNotificationBridge {
   constructor({
