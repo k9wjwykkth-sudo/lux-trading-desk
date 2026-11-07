@@ -11,7 +11,7 @@ import { CandleEngine } from "./candle-engine.js";
 
 import {
   luxSignalNotificationBridge
-} from "../../../notifications/signal-notification-bridge.js";
+} from "../../../notifications/signal-notification-bridge.js?v=5";
 
 export class LuxMarketPipeline {
   constructor({
