@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LUX — AI Trading Intelligence · v0.3</title>
+<style>
+:root{
+  --bg:#080a12;--panel:#101421;--panel2:#141a2a;--line:#242c40;
+  --muted:#8993aa;--text:#edf1fb;--violet:#9b83ff;--cyan:#55d6e8;
+  --green:#35d49a;--red:#ff6f82;--amber:#f5bd62;
+}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 15% 0%,#1a1735 0,transparent 38%),var(--bg);color:var(--text);font:14px Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif}
+button,select{font:inherit}button{cursor:pointer}
+.app{max-width:1600px;margin:auto;padding:22px}
+.top{display:flex;align-items:center;gap:18px;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}.logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#a78bfa,#52d8e9);display:grid;place-items:center;color:#090b14;font-weight:1000;font-size:20px;box-shadow:0 0 30px #927bff44}
+.brand h1{font-size:20px;letter-spacing:5px;margin:0}.brand small{display:block;color:var(--muted);letter-spacing:2px;font-size:9px;margin-top:3px}
+.topright{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.pill,.btn,.select{border:1px solid var(--line);background:#111626;color:var(--text);border-radius:10px;padding:9px 12px}.pill{font-size:11px;color:var(--muted)}.live-dot{display:inline-block;width:7px;height:7px;background:var(--amber);border-radius:50%;margin-right:7px}
+.btn.primary{background:linear-gradient(135deg,#8e79f8,#5c8dff);border:0;color:#080b16;font-weight:800}.btn:hover{border-color:var(--violet);transform:translateY(-1px)}
+.notice{border:1px solid #6f572a;background:#211b11;color:#f6d69a;border-radius:10px;padding:10px 13px;font-size:12px;margin-bottom:16px}
+.hero{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;margin:20px 0}
+.eyebrow{font-size:10px;color:var(--cyan);letter-spacing:2px;font-weight:800}.hero h2{font-size:clamp(22px,3vw,34px);margin:6px 0}.sub{color:var(--muted);font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:13px}.card{background:linear-gradient(145deg,#121827,#0e1320);border:1px solid var(--line);border-radius:15px;padding:15px;min-width:0;box-shadow:0 12px 35px #0002}
+.span8{grid-column:span 8}.span4{grid-column:span 4}.span12{grid-column:span 12}.span6{grid-column:span 6}
+.cardhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:13px}.cardhead h3{margin:0;font-size:13px;letter-spacing:.4px}.muted{color:var(--muted)}.tiny{font-size:10px;color:var(--muted)}
+.marketrow{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:13px}.metric{background:#0b101c;border:1px solid #20283a;border-radius:11px;padding:11px}.metric label{font-size:10px;color:var(--muted)}.metric strong{display:block;font-size:17px;margin:7px 0 3px}.up{color:var(--green)}.down{color:var(--red)}
+.chartwrap{height:255px;position:relative}.chartwrap canvas{width:100%;height:100%;display:block}.chartlegend{display:flex;gap:15px;font-size:10px;color:var(--muted);margin-top:8px}.key{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+.agents{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.agent{background:#0b101b;border:1px solid #222b3d;border-radius:12px;padding:11px;min-height:125px;position:relative;overflow:hidden}.agenttop{display:flex;justify-content:space-between;align-items:center}.pixel{font-size:25px;filter:drop-shadow(0 3px 0 #000);image-rendering:pixelated}.agent h4{margin:8px 0 4px;font-size:11px;letter-spacing:1px}.agent p{font-size:10px;line-height:1.45;color:var(--muted);margin:0}.status{font-size:9px;padding:4px 6px;border-radius:20px;background:#1b2333;color:var(--muted)}.status.active{background:#12352e;color:var(--green)}.status.review{background:#342817;color:var(--amber)}
+.newsitem,.activity{padding:10px 0;border-bottom:1px solid #20283a}.newsitem:last-child,.activity:last-child{border:0}.newsitem strong{display:block;font-size:11px;line-height:1.45}.newsitem small{color:var(--muted);font-size:9px}.tag{font-size:9px;border-radius:5px;padding:3px 6px;margin-right:5px;background:#20283a;color:#b7c3dc}.tag.pos{color:var(--green);background:#12352e}.tag.neg{color:var(--red);background:#3b1d29}
+.signal{display:flex;justify-content:space-between;align-items:center;padding:11px;background:#0b101b;border-radius:10px;margin-bottom:9px}.signal b{font-size:12px}.signal small{display:block;color:var(--muted);font-size:10px;margin-top:4px}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.kpi{background:#0b101b;border-radius:10px;padding:11px}.kpi small{font-size:9px;color:var(--muted)}.kpi strong{display:block;font-size:17px;margin-top:6px}
+.footer{color:#68738b;font-size:10px;text-align:center;padding:20px 0 5px}
+.tabs{display:flex;gap:7px;flex-wrap:wrap}.tab{border:1px solid var(--line);border-radius:8px;background:#0b101b;color:var(--muted);padding:7px 10px;font-size:10px}.tab.active{color:white;border-color:var(--violet);background:#211d3b}
+@media(max-width:900px){.span8,.span4,.span6{grid-column:span 12}.agents{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.app{padding:13px}.marketrow{grid-template-columns:repeat(2,1fr)}.agents{grid-template-columns:repeat(2,1fr)}.chartwrap{height:210px}.top{align-items:flex-start}.topright{width:100%}}
+
+/* LUX visual polish pass v0.2 */
+:root{
+  --bg:#070811;--panel:#111526;--panel2:#171d31;--line:#2a3150;
+  --muted:#9aa5bf;--text:#f4f5ff;--violet:#a58bff;--cyan:#67e4ee;
+  --green:#52e0ad;--red:#ff788f;--amber:#ffd078;
+}
+body{
+  background:
+    radial-gradient(ellipse at 8% 8%,rgba(123,86,255,.20),transparent 32%),
+    radial-gradient(ellipse at 95% 20%,rgba(52,199,220,.10),transparent 28%),
+    linear-gradient(145deg,#080914,#090d18 55%,#0a0b16);
+  letter-spacing:.08px;
+}
+.app{max-width:1660px;padding:26px}
+.top{padding:12px 15px;border:1px solid rgba(157,139,255,.18);border-radius:18px;
+  background:rgba(13,17,31,.78);backdrop-filter:blur(16px);box-shadow:0 12px 40px #0003}
+.logo{width:48px;height:48px;border-radius:16px;background:linear-gradient(135deg,#c0a9ff,#6ce6ee);
+  box-shadow:0 0 32px #927bff55, inset 0 1px 0 #ffffff88;font-size:22px}
+.brand h1{font-size:22px;letter-spacing:7px}
+.brand small{letter-spacing:2.7px}
+.btn,.select,.pill{border-radius:12px;transition:all .18s ease}
+.btn{padding:10px 14px}
+.btn.primary{box-shadow:0 6px 22px #8875ff44;background:linear-gradient(120deg,#b19aff,#73c8ff)}
+.notice{border-color:#67512b;background:linear-gradient(100deg,#241d12,#191726);border-radius:12px;padding:12px 15px}
+.hero{margin:27px 2px 20px}
+.hero h2{letter-spacing:-1.1px;font-size:clamp(27px,3.5vw,39px);background:linear-gradient(90deg,#fff,#c9c0ff 58%,#8ce9ed);color:transparent;background-clip:text}
+.eyebrow{letter-spacing:2.8px}
+.card{border-radius:18px;padding:17px;background:
+  linear-gradient(145deg,rgba(23,29,49,.96),rgba(12,16,29,.97));
+  border-color:rgba(145,155,205,.17);box-shadow:0 14px 38px #0003,inset 0 1px 0 #ffffff08;
+  transition:border-color .2s,transform .2s}
+.card:hover{border-color:rgba(165,139,255,.38)}
+.cardhead h3{letter-spacing:1.1px;font-size:12px}
+.metric{border-radius:13px;background:linear-gradient(145deg,#151c30,#0d1220);border-color:#29324b;padding:13px}
+.metric strong{font-size:19px;letter-spacing:-.4px}
+.marketrow{gap:11px}
+.chartwrap{height:285px}
+.agents{gap:11px}
+.agent{border-radius:15px;min-height:145px;padding:13px;background:
+  radial-gradient(circle at 90% 5%,#8c7bff14,transparent 43%),linear-gradient(145deg,#141b2d,#0b101d);
+  border-color:#29324a;transition:transform .18s,border-color .18s,box-shadow .18s}
+.agent:hover{transform:translateY(-3px);border-color:#9b83ff88;box-shadow:0 9px 25px #0004}
+.agent .pixel{width:39px;height:39px;display:grid;place-items:center;border-radius:12px;
+  background:linear-gradient(145deg,#292447,#172c3b);border:1px solid #ffffff12;font-size:23px}
+.agent h4{font-size:11px;letter-spacing:1.5px;margin-top:10px}
+.agent p{font-size:10.5px;line-height:1.55}
+.status{letter-spacing:.5px;font-weight:800}
+.status.active{box-shadow:0 0 13px #35d49a22}
+.signal{border:1px solid #2a3150;border-radius:13px;background:linear-gradient(120deg,#151b2d,#0c1220);padding:14px}
+.signal b{font-size:15px;letter-spacing:.4px}
+.kpi{border:1px solid #252e45;background:linear-gradient(145deg,#151b2d,#0b101c);border-radius:12px}
+.kpi strong{font-size:18px}
+.newsitem{padding:13px 0}
+.tag{border-radius:6px;letter-spacing:.5px;font-weight:800}
+.activity{padding:12px 0}
+.tab{border-radius:10px;padding:8px 12px;transition:all .18s}
+.tab.active{background:linear-gradient(120deg,#292044,#17263a);box-shadow:inset 0 0 0 1px #a58bff33}
+.footer{letter-spacing:.3px;padding-top:25px}
+@media(max-width:520px){
+  .app{padding:11px}.top{padding:12px}.brand h1{font-size:19px}
+  .hero{margin:21px 2px 16px}.chartwrap{height:225px}
+  .card{padding:14px}.agent{min-height:145px}
+}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><div class="logo">L</div><div><h1>LUX</h1><small>AI TRADING INTELLIGENCE</small></div></div>
+    <div class="topright">
+      <span class="pill"><span class="live-dot"></span>SIMULATED DATA</span>
+      <select class="select" id="marketSelect" aria-label="Select market"><option value="india">India · NSE</option><option value="crypto">Crypto · Global</option></select>
+      <button class="btn" id="pauseBtn">Pause agents</button>
+      <button class="btn primary" id="scanBtn">Run analysis ↗</button>
+    </div>
+  </header>
+  <div class="notice">Prototype mode: all prices, headlines, signals and performance figures on this page are illustrative simulations. LUX is not connected to Angel One, CoinDCX or a live news feed, and it cannot place orders.</div>
+  <section class="hero">
+    <div><div class="eyebrow">MULTI-AGENT COMMAND CENTRE</div><h2>One intelligence. Every market.</h2><div class="sub">Eight specialist agents collaborate to analyse setups, news and risk.</div></div>
+    <div class="tabs"><button class="tab active" data-tab="overview">Overview</button><button class="tab" data-tab="agents">Agent room</button><button class="tab" data-tab="news">News intelligence</button><button class="tab" data-tab="risk">Risk monitor</button></div>
+  </section>
+  <div class="marketrow">
+    <div class="metric"><label id="m1label">NIFTY 50</label><strong id="m1">24,680.25</strong><small class="up" id="m1change">+0.42%</small></div>
+    <div class="metric"><label id="m2label">BANK NIFTY</label><strong id="m2">55,210.80</strong><small class="down" id="m2change">−0.18%</small></div>
+    <div class="metric"><label>MARKET BIAS</label><strong id="bias">NEUTRAL</strong><small class="muted">Illustrative model reading</small></div>
+    <div class="metric"><label>AGENT CONSENSUS</label><strong id="consensus">5 / 8</strong><small class="muted">Favourable opinions</small></div>
+  </div>
+  <main class="grid">
+    <section class="card span8">
+      <div class="cardhead"><h3>MARKET OVERVIEW</h3><span class="tiny" id="chartLabel">NIFTY 50 · 15 MIN · SIMULATED</span></div>
+      <div class="chartwrap"><canvas id="chart"></canvas></div>
+      <div class="chartlegend"><span><i class="key" style="background:#9b83ff"></i>Price</span><span><i class="key" style="background:#55d6e8"></i>Trend average</span><span>● Indicative only</span></div>
+    </section>
+    <section class="card span4">
+      <div class="cardhead"><h3>CHIEF · FINAL DECISION</h3><span class="status review" id="chiefStatus">WAITING</span></div>
+      <div class="signal"><div><b id="decision">WAIT</b><small id="decisionText">Waiting for a complete agent review.</small></div><span class="pixel">🤖</span></div>
+      <div class="kpis">
+        <div class="kpi"><small>ENTRY</small><strong id="entry">—</strong></div>
+        <div class="kpi"><small>STOP</small><strong id="stop">—</strong></div>
+        <div class="kpi"><small>TARGET</small><strong id="target">—</strong></div>
+      </div>
+      <div class="signal" style="display:block;margin-top:12px">
+        <b>DECISION AUDIT</b>
+        <small id="auditText">Run analysis to see each agent's contribution and the reason for the final decision.</small>
+      </div>
+      <p class="tiny" style="margin-top:12px">Paper prototype only. A real signal requires verified market data, a tested strategy, feasible sizing and explicit risk approval.</p>
+    </section>
+    <section class="card span8" id="agentSection">
+      <div class="cardhead"><h3>THE EIGHT AGENTS</h3><span class="tiny" id="agentCount">8 AGENTS · STANDBY</span></div>
+      <div class="agents" id="agents">
+        <div class="agent"><div class="agenttop"><span class="pixel">🛰️</span><span class="status">IDLE</span></div><h4>SCAN</h4><p>Demo scan: a possible momentum pattern is detected; confirmation is still required.</p></div>
+        <div class="agent"><div class="agenttop"><span class="pixel">📰</span><span class="status">IDLE</span></div><h4>CRAWLER</h4><p>No verified live news source is connected. Headlines remain illustrative samples.</p></div>
+        <div class="agent"><div class="agenttop"><span class="pixel">🗣️</span><span class="status">IDLE</span></div><h4>SOCIAL</h4><p>Sentiment is neutral because no live social or market-discussion feed is connected.</p></div>
+        <div class="agent"><div class="agenttop"><span class="pixel">🛡️</span><span class="status">IDLE</span></div><h4>VET</h4><p>Challenge: the setup lacks independent confirmation and verified supporting evidence.</p></div>
+        <div class="agent"><div class="agenttop"><span class="pixel">🧠</span><span class="status">IDLE</span></div><h4>CHIEF</h4><p>Final decision: WAIT. Evidence is incomplete; no trade should be opened.</p></div>
+        <div class="agent"><div class="agenttop"><span class="pixel">🧮</span><span class="status">IDLE</span></div><h4>SIZE</h4><p>Risk budget: ₹5 at 0.5% of ₹1,000. Tradable quantity cannot be validated yet.</p></div>
+        <div class="agent"><div class="agenttop"><span class="pixel">📦</span><span class="status">IDLE</span></div><h4>FILLS</h4><p>No order created. The paper execution ledger remains unchanged.</p></div>
+        <div class="agent"><div class="agenttop"><span class="pixel">🚨</span><span class="status">IDLE</span></div><h4>RISK</h4><p>VETO: live data, instrument lot size and executable risk cannot be verified.</p></div>
+      </div>
+    </section>
+    <section class="card span4" id="newsSection">
+      <div class="cardhead"><h3>NEWS INTELLIGENCE</h3><span class="status">SAMPLE FEED</span></div>
+      <div class="newsitem"><strong><span class="tag pos">POSITIVE</span>Illustrative: major company reports stronger quarterly revenue</strong><small>Company news · Example headline · Not current news</small></div>
+      <div class="newsitem"><strong><span class="tag neg">NEGATIVE</span>Illustrative: central bank commentary raises rate uncertainty</strong><small>Macro · Example headline · Not current news</small></div>
+      <div class="newsitem"><strong><span class="tag">NEUTRAL</span>Illustrative: global markets await scheduled economic data</strong><small>Global markets · Example headline · Not current news</small></div>
+      <p class="tiny">A production version will verify source, timestamp, relevance, duplication and whether a headline is confirmed.</p>
+    </section>
+    <section class="card span6">
+      <div class="cardhead"><h3>RISK MONITOR</h3><span class="status active">GUARDRAILS ON</span></div>
+      <div class="kpis">
+        <div class="kpi"><small>TEST CAPITAL</small><strong>₹1,000</strong></div>
+        <div class="kpi"><small>RISK / TRADE</small><strong>0.5%</strong></div>
+        <div class="kpi"><small>DAILY LOSS CAP</small><strong>1.5%</strong></div>
+      </div>
+      <p class="tiny">Illustrative configuration only. Position sizing must account for lot sizes, fees, spread, slippage and instrument-specific risks.</p>
+    </section>
+    <section class="card span6">
+      <div class="cardhead"><h3>DESK ACTIVITY</h3><span class="tiny">LOCAL DEMO SESSION</span></div>
+      <div id="activity"><div class="activity"><span class="tag">SYSTEM</span><span class="tiny">LUX prototype initialised. Agents standing by.</span></div><div class="activity"><span class="tag">DATA</span><span class="tiny">Simulated market snapshot loaded.</span></div></div>
+    </section>
+  </main>
+  <footer class="footer">LUX AI · Prototype v0.3 · For demonstration and education only · Not investment advice</footer>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+let paused=false, scanNo=0, market='india';
+const agentNames=['SCAN','CRAWLER','SOCIAL','VET','CHIEF','SIZE','FILLS','RISK'];
+const statuses=['IDLE','IDLE','IDLE','IDLE','IDLE','IDLE','IDLE','IDLE'];
+function log(tag,msg){const el=document.createElement('div');el.className='activity';el.innerHTML=`<span class="tag">${tag}</span><span class="tiny">${msg}</span>`;$('activity').prepend(el);while($('activity').children.length>6)$('activity').lastChild.remove()}
+function drawChart(){
+ const c=$('chart'),r=c.getBoundingClientRect(),dpr=window.devicePixelRatio||1;c.width=r.width*dpr;c.height=r.height*dpr;
+ const ctx=c.getContext('2d');ctx.scale(dpr,dpr);const w=r.width,h=r.height;
+ ctx.clearRect(0,0,w,h);ctx.strokeStyle='#20283a';ctx.lineWidth=1;
+ for(let i=1;i<6;i++){let y=h*i/6;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke()}
+ for(let i=1;i<9;i++){let x=w*i/9;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke()}
+ let vals=[],v=h*.58;for(let i=0;i<70;i++){v+= (Math.random()-.47)*10;v=Math.max(h*.15,Math.min(h*.83,v));vals.push(v)}
+ ctx.beginPath();vals.forEach((y,i)=>{let x=i*w/(vals.length-1);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.lineWidth=2.2;ctx.strokeStyle='#a38bff';ctx.stroke();
+ ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();let grad=ctx.createLinearGradient(0,0,0,h);grad.addColorStop(0,'#9b83ff28');grad.addColorStop(1,'#9b83ff00');ctx.fillStyle=grad;ctx.fill();
+ ctx.beginPath();ctx.moveTo(0,h*.62);ctx.bezierCurveTo(w*.3,h*.55,w*.65,h*.63,w,h*.49);ctx.strokeStyle='#55d6e8';ctx.lineWidth=1.4;ctx.setLineDash([5,5]);ctx.stroke();ctx.setLineDash([]);
+ ctx.fillStyle='#8993aa';ctx.font='10px system-ui';ctx.fillText('Illustrative price path · not live market data',8,14);
+}
+function resetAgents(){
+ document.querySelectorAll('.agent .status').forEach(s=>{s.textContent='IDLE';s.className='status'});
+}
+function setAgentReport(index,status,report){
+ const card=document.querySelectorAll('.agent')[index];
+ const badge=card.querySelector('.status');
+ badge.textContent=status;
+ badge.className='status '+(status==='VETO'?'review':status==='COMPLETE'?'active':'');
+ card.querySelector('p').textContent=report;
+}
+function runAnalysis(){
+ if(paused){log('SYSTEM','Agents are paused. Resume them before running analysis.');return}
+ scanNo++;
+ const cards=[...document.querySelectorAll('.agent')];
+ $('agentCount').textContent='ANALYSIS RUN '+scanNo+' · IN PROGRESS';
+ $('chiefStatus').textContent='ANALYSING';$('chiefStatus').className='status active';
+ $('decision').textContent='ANALYSING';
+ $('decisionText').textContent='Eight demo agents are reviewing the same simulated snapshot…';
+ $('auditText').textContent='Collecting technical, news, sentiment, validation, sizing and risk reports…';
+ $('entry').textContent=$('stop').textContent=$('target').textContent='—';
+ cards.forEach((card)=>{const s=card.querySelector('.status');s.textContent='WORKING';s.className='status active'});
+ log('SYSTEM','Analysis run '+scanNo+' started. Demo-only data; no broker orders are possible.');
+
+ setTimeout(()=>{
+   const reports=[
+     ['COMPLETE','Demo scan: possible momentum pattern detected; no verified price history is available.'],
+     ['LIMITED','Crawler: no verified live news source is connected; sample headlines are not evidence.'],
+     ['LIMITED','Social: neutral by default because no live sentiment feed is connected.'],
+     ['REVIEW','Vet: setup is not independently confirmed; evidence quality is insufficient.'],
+     ['WAIT','Chief: WAIT — insufficient verified evidence for a defensible trade decision.'],
+     ['LIMITED','Size: 0.5% of ₹1,000 = ₹5 illustrative risk budget; lot size and costs are unverified.'],
+     ['IDLE','Fills: no paper order created because the final decision is WAIT.'],
+     ['VETO','Risk: veto — no verified live data, validated sizing or approved strategy is available.']
+   ];
+   reports.forEach((r,i)=>setAgentReport(i,r[0],r[1]));
+   $('agentCount').textContent='8 AGENTS · REVIEW COMPLETE';
+   $('decision').textContent='WAIT · NO TRADE';
+   $('decisionText').textContent='Risk veto: evidence and executable position sizing are not verified.';
+   $('chiefStatus').textContent='RISK VETO';$('chiefStatus').className='status review';
+   $('entry').textContent=$('stop').textContent=$('target').textContent='—';
+   $('bias').textContent='UNCONFIRMED';
+   $('consensus').textContent='0 / 8';
+   $('auditText').textContent='SCAN found only a possible demo pattern. CRAWLER and SOCIAL lack live feeds; VET could not confirm it; SIZE cannot validate a tradable quantity; RISK vetoed the setup. FILLS placed no order.';
+   log('SCAN','Possible demo momentum pattern noted; confirmation unavailable.');
+   log('VET','Setup challenged: no independent confirmation or verified news evidence.');
+   log('SIZE','Illustrative risk budget is ₹5; executable quantity cannot be validated.');
+   log('RISK','VETO applied. CHIEF finalised WAIT; FILLS created no order.');
+ },1400);
+}
+$('scanBtn').addEventListener('click',runAnalysis);
+$('pauseBtn').addEventListener('click',()=>{paused=!paused;$('pauseBtn').textContent=paused?'Resume agents':'Pause agents';if(paused){resetAgents();$('agentCount').textContent='8 AGENTS · PAUSED';log('SYSTEM','All demo agents paused.')}else{log('SYSTEM','Demo agents resumed.')}});
+$('marketSelect').addEventListener('change',e=>{market=e.target.value;if(market==='india'){$('m1label').textContent='NIFTY 50';$('m1').textContent='24,680.25';$('m1change').textContent='+0.42%';$('m1change').className='up';$('m2label').textContent='BANK NIFTY';$('m2').textContent='55,210.80';$('m2change').textContent='−0.18%';$('m2change').className='down';$('chartLabel').textContent='NIFTY 50 · 15 MIN · SIMULATED'}else{$('m1label').textContent='BTC / USD';$('m1').textContent='$76,026.44';$('m1change').textContent='+0.15%';$('m1change').className='up';$('m2label').textContent='ETH / USD';$('m2').textContent='$2,246.00';$('m2change').textContent='−0.40%';$('m2change').className='down';$('chartLabel').textContent='BTC / USD · 15 MIN · SIMULATED'}$('decision').textContent='WAIT';$('decisionText').textContent='Market changed. Run a new demo analysis.';$('auditText').textContent='Market selection changed. All displayed values remain simulated; run analysis for a fresh agent review.';$('entry').textContent=$('stop').textContent=$('target').textContent='—';$('bias').textContent='NEUTRAL';$('consensus').textContent='—';resetAgents();$('chiefStatus').textContent='WAITING';$('chiefStatus').className='status review';$('agentCount').textContent='8 AGENTS · STANDBY';log('MARKET','Switched dashboard to '+(market==='india'?'Indian markets':'global crypto')+'. Values remain simulated.')});
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');const id=t.dataset.tab;if(id==='agents')$('agentSection').scrollIntoView({behavior:'smooth'});if(id==='news')$('newsSection').scrollIntoView({behavior:'smooth'});if(id==='risk')document.querySelector('.span6').scrollIntoView({behavior:'smooth'});if(id==='overview')window.scrollTo({top:0,behavior:'smooth'})}));
+window.addEventListener('resize',drawChart);drawChart();
+</script>
+</body></html>
