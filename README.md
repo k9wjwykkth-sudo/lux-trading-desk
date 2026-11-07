@@ -1,1 +1,1 @@
-# lux-trading-desk
+# lus-trading-desk
