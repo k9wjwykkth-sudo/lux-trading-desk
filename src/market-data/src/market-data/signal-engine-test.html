@@ -1,0 +1,55 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LUX Signal Engine Tests</title>
+  <style>
+    body {
+      background: #10131c;
+      color: white;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    button {
+      background: #a78bfa;
+      color: #10131c;
+      padding: 14px 20px;
+      border: 0;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+    pre {
+      background: #202536;
+      padding: 15px;
+      border-radius: 8px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <h2>LUX Signal Engine Test</h2>
+  <p>PAPER MODE ONLY — NO LIVE TRADES</p>
+
+  <button id="run">Run Signal Tests</button>
+
+  <h3>Test Results</h3>
+  <pre id="results">Ready to test.</pre>
+
+  <script type="module">
+    import { runSignalEngineTests } from "./signal-engine-test.js";
+
+    document.getElementById("run").addEventListener("click", () => {
+      const report = runSignalEngineTests();
+
+      document.getElementById("results").textContent =
+        "LUX SIGNAL ENGINE TEST\n\n" +
+        "Passed: " + report.passed + "\n" +
+        "Failed: " + report.failed + "\n\n" +
+        JSON.stringify(report.results, null, 2) +
+        "\n\nMODE: " + report.mode;
+    });
+  </script>
+</body>
+</html>
