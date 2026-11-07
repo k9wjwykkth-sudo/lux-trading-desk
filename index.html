@@ -252,4 +252,177 @@ $('marketSelect').addEventListener('change',e=>{market=e.target.value;if(market=
 document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');const id=t.dataset.tab;if(id==='agents')$('agentSection').scrollIntoView({behavior:'smooth'});if(id==='news')$('newsSection').scrollIntoView({behavior:'smooth'});if(id==='risk')document.querySelector('.span6').scrollIntoView({behavior:'smooth'});if(id==='overview')window.scrollTo({top:0,behavior:'smooth'})}));
 window.addEventListener('resize',drawChart);drawChart();
 </script>
-</body></html>
+<style>
+
+#lux-notify-button {
+
+  position:fixed;
+
+  right:18px;
+
+  bottom:18px;
+
+  z-index:9999;
+
+  background:#8b75ff;
+
+  color:white;
+
+  border:0;
+
+  border-radius:30px;
+
+  padding:13px 18px;
+
+  font-weight:bold;
+
+  font-size:14px;
+
+}
+
+#lux-notify-panel {
+
+  display:none;
+
+  position:fixed;
+
+  right:15px;
+
+  bottom:75px;
+
+  z-index:9999;
+
+  width:min(340px,90vw);
+
+  max-height:65vh;
+
+  overflow:auto;
+
+  background:#171d2b;
+
+  color:white;
+
+  border:1px solid #596078;
+
+  border-radius:14px;
+
+  padding:16px;
+
+  font-family:system-ui;
+
+}
+
+.lux-notice {
+
+  padding:10px;
+
+  border-bottom:1px solid #394154;
+
+  font-size:13px;
+
+}
+
+.lux-notice small {
+
+  display:block;
+
+  color:#aab2c5;
+
+  margin-top:5px;
+
+}
+
+</style>
+
+<button id="lux-notify-button">
+
+  🔔 Notifications (0)
+
+</button>
+
+<div id="lux-notify-panel">
+
+  <h3>LUX Notifications</h3>
+
+  <button id="lux-mark-read">Mark all as read</button>
+
+  <div id="lux-notify-list"></div>
+
+</div>
+
+<script type="module">
+
+import { luxNotifications } from
+
+  './src/notifications/dashboard-notifications.js';
+  
+
+const button = document.getElementById('lux-notify-button');
+
+const panel = document.getElementById('lux-notify-panel');
+
+const list = document.getElementById('lux-notify-list');
+
+button.addEventListener('click', () => {
+
+  panel.style.display =
+
+    panel.style.display === 'block' ? 'none' : 'block';
+
+});
+
+document.getElementById('lux-mark-read').addEventListener('click', () => {
+
+  luxNotifications.markAllRead();
+
+});
+
+luxNotifications.subscribe(snapshot => {
+
+  button.textContent = `🔔 Notifications (${snapshot.unreadCount})`;
+
+  list.replaceChildren();
+
+  snapshot.notifications.forEach(item => {
+
+    const notice = document.createElement('div');
+
+    notice.className = 'lux-notice';
+
+    notice.textContent = item.title;
+
+    const message = document.createElement('small');
+
+    message.textContent = item.message;
+
+    notice.appendChild(message);
+
+    if (!item.read) {
+
+      notice.style.borderLeft = '3px solid #8b75ff';
+
+      notice.addEventListener('click', () => {
+
+        luxNotifications.markRead(item.id);
+
+      });
+
+    }
+
+    list.appendChild(notice);
+
+  });
+
+});
+
+luxNotifications.add({
+
+  title: 'LUX Notification Centre',
+
+  message: 'Your dashboard notification system is connected.',
+
+  level: 'success'
+
+});
+
+</script></body></html>

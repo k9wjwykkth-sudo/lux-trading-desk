@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LUX Pipeline Test</title>
+  <style>
+    body {
+      background: #10131c;
+      color: white;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    button {
+      background: #a78bfa;
+      color: #10131c;
+      padding: 14px 20px;
+      border: 0;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+    pre {
+      background: #202536;
+      padding: 15px;
+      border-radius: 8px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <h2>LUX Market Pipeline Test</h2>
+  <p>SIMULATED DATA — PAPER MODE ONLY</p>
+
+  <button id="run">Run Pipeline Test</button>
+
+  <h3>Test Results</h3>
+  <pre id="results">Waiting for test...</pre>
+
+  <script type="module">
+    import { luxMarketPipeline } from "./lux-market-pipeline.js";
+    import { luxNotifications } from "../../../notifications/dashboard-notifications.js";
+
+    const output = document.getElementById("results");
+
+    document.getElementById("run").addEventListener("click", () => {
+      const baseTime = 1800000000000;
+      let accepted = 0;
+      let rejected = 0;
+      let closed = 0;
+      let signals = 0;
+      let signalDetails = [];
+      
+
+      for (let i = 0; i < 45; i++) {
+        let price;
+
+        if (i < 20) {
+          price = 100 + i * 0.3;
+        } else if (i < 32) {
+          price = 106 - (i - 20) * 0.35;
+        } else {
+          price = 101.8 + (i - 32) * 0.5;
+        }
+
+        const result = luxMarketPipeline.ingestTick({
+          instrumentId: "LUX-TEST",
+          timestamp: baseTime + i * 60000,
+          price,
+          volume: 10,
+          eventId: "LUX-TEST-" + i
+        });
+
+        if (result.accepted) {
+          accepted++;
+          closed += result.closedCandles.length;
+          signals += result.actionableSignals.length;
+          result.actionableSignals.forEach(signal => {
+  signalDetails.push({
+  action: signal.action,
+  instrument: signal.instrumentId,
+  side: signal.side,
+  entry: signal.entryPrice,
+  exit: signal.exitPrice,
+  stopLoss: signal.stopLoss,
+  target: signal.target,
+  reason: signal.reason
+});
+});
+        } else {
+          rejected++;
+        }
+      }
+
+      const candles = luxMarketPipeline.getCandles(
+        "LUX-TEST",
+        "1m",
+        { includeForming: false }
+      );
+
+      const notificationData = luxNotifications.getSnapshot();
+
+      output.textContent =
+        "PIPELINE TEST COMPLETED\n\n" +
+        "Accepted ticks: " + accepted + "\n" +
+        "Rejected ticks: " + rejected + "\n" +
+        "Closed candles (all timeframes): " + closed + "\n" +
+        "1-minute candles: " + candles.length + "\n" +
+        "Trading signals: " + signals + "\n" +
+        "Dashboard notifications: " +
+        notificationData.notifications.length + "\n\n" +
+        "SIGNAL DETAILS\n" +
+JSON.stringify(signalDetails, null, 2) +
+"\n\nMode: PAPER ONLY";
+    });
+  </script>
+</body>
+</html>
