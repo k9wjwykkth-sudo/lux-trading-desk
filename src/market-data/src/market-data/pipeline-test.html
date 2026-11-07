@@ -76,12 +76,15 @@
           signals += result.actionableSignals.length;
           result.actionableSignals.forEach(signal => {
   signalDetails.push({
-    action: signal.action,
-    instrument: signal.instrumentId,
-    entry: signal.entryPrice,
-    stopLoss: signal.stopLoss,
-    target: signal.target
-  });
+  action: signal.action,
+  instrument: signal.instrumentId,
+  side: signal.side,
+  entry: signal.entryPrice,
+  exit: signal.exitPrice,
+  stopLoss: signal.stopLoss,
+  target: signal.target,
+  reason: signal.reason
+});
 });
         } else {
           rejected++;
