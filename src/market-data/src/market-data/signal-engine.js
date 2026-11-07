@@ -160,7 +160,12 @@ export class LuxSignalEngine {
           timeframe: candle.timeframe,
           side: position.side,
           entryPrice: position.entryPrice,
-          exitPrice: price,
+          exitPrice:
+  exitReason === "STOP_LOSS"
+    ? position.stopLoss
+    : exitReason === "TARGET_REACHED"
+      ? position.target
+      : price,
           reason: exitReason,
           createdAt: candle.startTime,
           signalId: `${key}:EXIT:${candle.startTime}`,
