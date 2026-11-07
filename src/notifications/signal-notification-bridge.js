@@ -4,7 +4,7 @@
  * Connects trading signals to dashboard notifications.
  */
 
-import { luxNotifications } from "./dashboard-notification.js";
+import { luxNotifications } from "./dashboard-notifications.js";
 
 import {
   luxSignalEngine
