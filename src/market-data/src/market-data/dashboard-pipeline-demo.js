@@ -125,8 +125,7 @@ if (liveSignals && liveSignalCount) {
         "Rejection details: " +
         JSON.stringify(rejectionReasons) + "\n\n" +
         "Mode: PAPER ONLY";
-document.getElementById("decision").textContent =
-  document.getElementById("decision").textContent = "WAIT · NO TRADE";
+document.getElementById("decision").textContent = "WAIT · NO TRADE";
 
 document.getElementById("decisionText").textContent =
   "Paper signals are simulation output only. Chief review is required.";
