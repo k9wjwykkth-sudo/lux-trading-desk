@@ -125,8 +125,7 @@ if (liveSignals && liveSignalCount) {
         "Rejection details: " +
         JSON.stringify(rejectionReasons) + "\n\n" +
         "Mode: PAPER ONLY";
-
-      document.getElementById("decision").textContent =
+document.getElementById("decision").textContent =
   signals > 0 ? "PAPER SIGNAL · NOT APPROVED" : "WAIT · NO TRADE";
 
 document.getElementById("decisionText").textContent =
@@ -136,6 +135,7 @@ document.getElementById("decisionText").textContent =
 
 document.getElementById("chiefStatus").textContent = "RISK VETO";
 document.getElementById("chiefStatus").className = "status review";
+      
       const entrySignal = signalDetails.find(
   signal => signal.action === "BUY" || signal.action === "SELL"
 );
