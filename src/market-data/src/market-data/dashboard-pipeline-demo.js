@@ -46,17 +46,19 @@ import("./lux-market-pipeline.js")
           accepted++;
           closed += result.closedCandles?.length ?? 0;
           signals += result.actionableSignals?.length ?? 0;
-          signalDetails.push(...(result.actionableSignals || []).map(signal => ({
+                    signalDetails.push(...(result.actionableSignals || []).map(signal => {
             console.log("LUX SIGNAL DEBUG:", signal);
-  action: signal.action,
-instrument: signal.instrument,
-side: signal.side,
-entry: signal.entryPrice,
-exit: signal.exitPrice,
-stopLoss: signal.stopLoss,
-target: signal.target,
-reason: signal.reason
-})));
+            return {
+              action: signal.action,
+              instrument: signal.instrumentId,
+              side: signal.side,
+              entry: signal.entryPrice,
+              exit: signal.exitPrice,
+              stopLoss: signal.stopLoss,
+              target: signal.target,
+              reason: signal.reason
+            };
+          }));
         } else {
           rejected++;
           const reason = result.reason || "unknown";
