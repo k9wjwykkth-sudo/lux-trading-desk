@@ -126,16 +126,24 @@ if (liveSignals && liveSignalCount) {
         JSON.stringify(rejectionReasons) + "\n\n" +
         "Mode: PAPER ONLY";
 document.getElementById("decision").textContent =
-  signals > 0 ? "PAPER SIGNAL · NOT APPROVED" : "WAIT · NO TRADE";
+  document.getElementById("decision").textContent = "WAIT · NO TRADE";
 
 document.getElementById("decisionText").textContent =
-  signals > 0
-    ? "Paper signal generated. Awaiting verification and risk approval."
-    : "No actionable paper signal generated.";
+  "Paper signals are simulation output only. Chief review is required.";
 
 document.getElementById("chiefStatus").textContent = "RISK VETO";
 document.getElementById("chiefStatus").className = "status review";
-      
+
+document.getElementById("auditText").textContent =
+  "PAPER PIPELINE: " + signals +
+  " signal(s) generated. Starting eight-agent review...";
+
+if (typeof window.runAnalysis === "function") {
+  window.runAnalysis();
+} else {
+  document.getElementById("auditText").textContent +=
+    " Eight-agent review unavailable.";
+}
       const entrySignal = signalDetails.find(
   signal => signal.action === "BUY" || signal.action === "SELL"
 );
