@@ -128,21 +128,29 @@ export function runSignalEngineTests() {
     ) < 0.01
   );
 
-  // HOLD test
+   // Duplicate entry protection test
   {
     const { engine, result } = prepareEngine(buyPrices, "HOLD-TEST");
+
     const next = engine.processCandle(
       makeCandle("HOLD-TEST", 26 * 60000, result.entryPrice)
     );
 
-    test(
-  "Prevent duplicate entry while position is open",
-  next.action === "HOLD" &&
-  next.action !== "BUY" &&
-  next.action !== "SELL"
-);
-  }
+    const nextAgain = engine.processCandle(
+      makeCandle("HOLD-TEST", 27 * 60000, result.entryPrice)
+    );
 
+    const position = engine.getPosition("HOLD-TEST", "1m");
+
+    test(
+      "Prevent duplicate entry while position is open",
+      next.action === "HOLD" &&
+      nextAgain.action === "HOLD" &&
+      position !== null &&
+      position.side === "BUY" &&
+      position.entryPrice === result.entryPrice
+    );
+  }
   // Stop-loss test
   {
     const { engine, result } = prepareEngine(buyPrices, "STOP-TEST");
