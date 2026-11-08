@@ -262,7 +262,7 @@ function runAnalysis(){
    $('entry').textContent=$('stop').textContent=$('target').textContent='—';
    $('bias').textContent='UNCONFIRMED';
    $('consensus').textContent='0 / 8';
-   $('auditText').textContent='SCAN found only a possible demo pattern. CRAWLER and SOCIAL lack live feeds; VET could not confirm it; SIZE cannot validate a tradable quantity; RISK vetoed the setup. FILLS placed no order.';
+   $('auditText').textContent=(window.luxPipelineAuditSummary ? window.luxPipelineAuditSummary + ' ' : '') + 'SCAN found only a possible demo pattern. CRAWLER and SOCIAL lack live feeds; VET could not confirm it; SIZE cannot validate a tradable quantity; RISK vetoed the setup. FILLS placed no order.';
    log('SCAN','Possible demo momentum pattern noted; confirmation unavailable.');
    log('VET','Setup challenged: no independent confirmation or verified news evidence.');
    log('SIZE','Illustrative risk budget is ₹5; executable quantity cannot be validated.');
