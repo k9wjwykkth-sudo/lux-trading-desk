@@ -17,6 +17,7 @@ import("./lux-market-pipeline.js")
       let rejected = 0;
       let closed = 0;
       let signals = 0;
+      let signalDetails = [];
 
       const instrument = "LUX-TEST-" + Date.now();
       const baseTime = Math.floor(Date.now() / 60000) * 60000;
@@ -45,6 +46,16 @@ import("./lux-market-pipeline.js")
           accepted++;
           closed += result.closedCandles?.length ?? 0;
           signals += result.actionableSignals?.length ?? 0;
+          signalDetails.push(...(result.actionableSignals || []).map(signal => ({
+  action: signal.action,
+  instrument: signal.instrument,
+  side: signal.side,
+  entry: signal.entry,
+  exit: signal.exit,
+  stopLoss: signal.stopLoss,
+  target: signal.target,
+  reason: signal.reason
+})));
         } else {
           rejected++;
           const reason = result.reason || "unknown";
@@ -53,6 +64,54 @@ import("./lux-market-pipeline.js")
         }
       }
 
+      const liveSignals = document.getElementById("liveSignals");
+const liveSignalCount = document.getElementById("liveSignalCount");
+
+if (liveSignals && liveSignalCount) {
+  liveSignals.replaceChildren();
+
+  liveSignalCount.textContent = signalDetails.length + " SIGNALS";
+
+  if (signalDetails.length === 0) {
+    liveSignals.textContent = "No actionable signals generated in this run.";
+  } else {
+    [...signalDetails].reverse().forEach(signal => {
+      const card = document.createElement("div");
+      card.className = "signal";
+
+      const details = document.createElement("div");
+      details.innerHTML = "";
+
+      const title = document.createElement("b");
+      title.textContent = signal.action + " · " + signal.instrument;
+      details.appendChild(title);
+
+      const fields = [
+        ["Side", signal.side],
+        ["Entry", signal.entry],
+        ["Exit", signal.exit],
+        ["Stop loss", signal.stopLoss],
+        ["Target", signal.target],
+        ["Reason", signal.reason]
+      ];
+
+      fields.forEach(([label, value]) => {
+        if (value !== undefined && value !== null) {
+          const line = document.createElement("small");
+          line.textContent = label + ": " + value;
+          details.appendChild(line);
+        }
+      });
+
+      const paper = document.createElement("small");
+      paper.textContent = "PAPER ONLY · No live order";
+      details.appendChild(paper);
+
+      card.appendChild(details);
+      liveSignals.appendChild(card);
+    });
+  }
+}
       const report =
         "PAPER PIPELINE COMPLETED\n\n" +
         "Accepted ticks: " + accepted + "\n" +
