@@ -26,6 +26,7 @@
       padding: 15px;
       border-radius: 8px;
       white-space: pre-wrap;
+      overflow-wrap: anywhere;
     }
   </style>
 </head>
@@ -45,80 +46,92 @@
   <h3>Test Results</h3>
   <pre id="results">Ready to test.</pre>
 
-  <script type="module">
-    import {
-      ingestMarketTick,
-      getMarketFeedState
-    } from "./market-feed-controller.js?v=1";
+  <script>
+    const runButton = document.getElementById("run");
+    const output = document.getElementById("results");
 
-    document.getElementById("run").addEventListener("click", () => {
-      const results = [];
+    runButton.addEventListener("click", async () => {
+      output.textContent = "Loading controller modules...";
 
-      const valid = ingestMarketTick({
-        market: "india",
-        instrumentId: "LUX-CONTROLLER-TEST",
-        timestamp: 1800000000000,
-        price: 100,
-        volume: 1,
-        eventId: "controller-valid-1"
-      });
+      try {
+        const {
+          ingestMarketTick,
+          getMarketFeedState
+        } = await import("./market-feed-controller.js?v=2");
 
-      results.push({
-        test: "Accept valid India tick",
-        result: valid.accepted ? "PASS" : "FAIL",
-        reason: valid.reason ?? "accepted"
-      });
+        const results = [];
 
-      const wrongMarket = ingestMarketTick({
-        market: "crypto",
-        instrumentId: "LUX-WRONG-MARKET",
-        timestamp: 1800000001000,
-        price: 100,
-        volume: 1,
-        eventId: "controller-wrong-1"
-      });
+        const valid = ingestMarketTick({
+          market: "india",
+          instrumentId: "LUX-CONTROLLER-TEST",
+          timestamp: 1800000000000,
+          price: 100,
+          volume: 1,
+          eventId: "controller-valid-1"
+        });
 
-      results.push({
-        test: "Reject wrong-market tick",
-        result:
-          !wrongMarket.accepted &&
-          wrongMarket.reason === "market_mismatch"
-            ? "PASS"
-            : "FAIL",
-        reason: wrongMarket.reason
-      });
+        results.push({
+          test: "Accept valid India tick",
+          result: valid.accepted ? "PASS" : "FAIL",
+          reason: valid.reason ?? "accepted"
+        });
 
-      const invalid = ingestMarketTick({
-        market: "india",
-        instrumentId: "LUX-INVALID-TEST",
-        timestamp: 1800000002000,
-        price: 0,
-        volume: 1,
-        eventId: "controller-invalid-1"
-      });
+        const wrongMarket = ingestMarketTick({
+          market: "crypto",
+          instrumentId: "LUX-WRONG-MARKET",
+          timestamp: 1800000001000,
+          price: 100,
+          volume: 1,
+          eventId: "controller-wrong-1"
+        });
 
-      results.push({
-        test: "Reject invalid price",
-        result:
-          !invalid.accepted &&
-          invalid.reason === "invalid_price"
-            ? "PASS"
-            : "FAIL",
-        reason: invalid.reason
-      });
+        results.push({
+          test: "Reject wrong-market tick",
+          result:
+            !wrongMarket.accepted &&
+            wrongMarket.reason === "market_mismatch"
+              ? "PASS"
+              : "FAIL",
+          reason: wrongMarket.reason
+        });
 
-      const passed = results.filter(
-        item => item.result === "PASS"
-      ).length;
+        const invalid = ingestMarketTick({
+          market: "india",
+          instrumentId: "LUX-INVALID-TEST",
+          timestamp: 1800000002000,
+          price: 0,
+          volume: 1,
+          eventId: "controller-invalid-1"
+        });
 
-      document.getElementById("results").textContent =
-        "LUX MARKET FEED CONTROLLER TEST\n\n" +
-        "Passed: " + passed + "\n" +
-        "Failed: " + (results.length - passed) + "\n\n" +
-        JSON.stringify(results, null, 2) +
-        "\n\nCONTROLLER STATE\n" +
-        JSON.stringify(getMarketFeedState(), null, 2) +
-        "\n\nMODE: PAPER ONLY";
+        results.push({
+          test: "Reject invalid price",
+          result:
+            !invalid.accepted &&
+            invalid.reason === "invalid_price"
+              ? "PASS"
+              : "FAIL",
+          reason: invalid.reason
+        });
+
+        const passed = results.filter(
+          item => item.result === "PASS"
+        ).length;
+
+        output.textContent =
+          "LUX MARKET FEED CONTROLLER TEST\n\n" +
+          "Passed: " + passed + "\n" +
+          "Failed: " + (results.length - passed) + "\n\n" +
+          JSON.stringify(results, null, 2) +
+          "\n\nCONTROLLER STATE\n" +
+          JSON.stringify(getMarketFeedState(), null, 2) +
+          "\n\nMODE: PAPER ONLY";
+
+      } catch (error) {
+        output.textContent =
+          "CONTROLLER MODULE ERROR\n\n" +
+          (error.stack || error.message || String(error));
+      }
     });
   </script>
 </body>
