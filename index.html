@@ -286,8 +286,7 @@ $('marketSelect').addEventListener('change',e=>{
   };
     [['m1label',data.a[0]],['m1',data.a[1]],['m1change',data.a[2]],['m2label',data.b[0]],['m2',data.b[1]],['m2change',data.b[2]],['m3label',data.c[0]],['m3',data.c[1]],['m3change',data.c[2]]].forEach(([id,value])=>$(id).textContent=value);
   $('m1change').className=data.a[3];$('m2change').className=data.b[3];$('m3change').className=data.c[3];
-  $('m1change').className=data.a[3];
-  $('m2change').className=data.b[3];
+  
   $('deskTitle').textContent=market==='india'?'INDIA STOCK WATCHLIST':'CRYPTO WATCHLIST';
   $('deskAssets').innerHTML=[data.a,data.b,data.c].map(a=>'<div class="metric"><label>'+a[0]+'</label><strong>'+a[1]+'</strong><small class="'+a[3]+'">'+a[2]+'</small></div>').join('');
   $('chartLabel').textContent=data.chart+' · 15 MIN · SIMULATED';
