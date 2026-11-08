@@ -9,7 +9,7 @@ if (topRight) {
   topRight.appendChild(button);
 }
 
-import("./market-feed-controller.js")
+import("./lux-market-pipeline.js")
   .then(({ luxMarketPipeline }) => {
 
     button.addEventListener("click", () => {
