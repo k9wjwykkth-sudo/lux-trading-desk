@@ -34,7 +34,8 @@ import("./market-feed-controller.js")
           price = 101.8 + (i - 32) * 0.5;
         }
 
-        const result = luxMarketPipeline.ingestTick({
+        const result = ingestMarketTick({
+          market: document.getElementById("marketSelect")?.value || "india",
           instrumentId: instrument,
           timestamp: baseTime + i * 60000,
           price,
