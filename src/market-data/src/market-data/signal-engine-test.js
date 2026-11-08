@@ -177,6 +177,19 @@ export function runSignalEngineTests() {
       next.action === "EXIT" && next.reason === "TARGET_REACHED");
   }
 
+    // SELL stop-loss test
+  {
+    const { engine, result } = prepareEngine(sellPrices, "SELL-STOP-TEST");
+
+    const next = engine.processCandle(
+      makeCandle("SELL-STOP-TEST", 26 * 60000, result.entryPrice, {
+        high: result.stopLoss + 0.1
+      })
+    );
+
+    test("Exit SELL when stop-loss is reached",
+      next.action === "EXIT" && next.reason === "STOP_LOSS");
+  }
   const passed = results.filter(
     item => item.result === "PASS"
   ).length;
