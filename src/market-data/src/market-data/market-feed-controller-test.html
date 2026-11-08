@@ -94,7 +94,24 @@
           reason: validCrypto.reason ?? "accepted"
         });
 
-        marketSelector.value = "india";
+        const cryptoState = getMarketFeedState();
+
+results.push({
+  test: "Track selected Crypto market",
+  result: cryptoState.market === "crypto" ? "PASS" : "FAIL",
+  reason: cryptoState.market
+});
+
+marketSelector.value = "india";
+marketSelector.dispatchEvent(new Event("change"));
+
+const indiaState = getMarketFeedState();
+
+results.push({
+  test: "Track selected India market",
+  result: indiaState.market === "india" ? "PASS" : "FAIL",
+  reason: indiaState.market
+});
         const wrongMarket = ingestMarketTick({
           market: "crypto",
           instrumentId: "LUX-WRONG-MARKET",
