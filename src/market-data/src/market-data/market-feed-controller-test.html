@@ -127,10 +127,12 @@
           JSON.stringify(getMarketFeedState(), null, 2) +
           "\n\nMODE: PAPER ONLY";
 
-      } catch (error) {
+           } catch (error) {
         output.textContent =
           "CONTROLLER MODULE ERROR\n\n" +
-          (error.stack || error.message || String(error));
+          "Error type: " + error.name + "\n\n" +
+          "Message: " + error.message + "\n\n" +
+          "Details:\n" + (error.stack || String(error));
       }
     });
   </script>
