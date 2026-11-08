@@ -112,7 +112,17 @@ results.push({
   result: indiaState.market === "india" ? "PASS" : "FAIL",
   reason: indiaState.market
 });
-        const wrongMarket = ingestMarketTick({
+        const malformed = ingestMarketTick(null);
+
+results.push({
+  test: "Reject malformed tick",
+  result:
+    !malformed.accepted &&
+    malformed.reason === "invalid_tick"
+      ? "PASS"
+      : "FAIL",
+  reason: malformed.reason
+});
           market: "crypto",
           instrumentId: "LUX-WRONG-MARKET",
           timestamp: 1800000001000,
