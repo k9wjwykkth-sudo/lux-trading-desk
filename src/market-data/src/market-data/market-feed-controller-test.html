@@ -162,6 +162,24 @@ results.push({
           reason: invalid.reason
         });
 
+        const invalidTimestamp = ingestMarketTick({
+  market: "india",
+  instrumentId: "LUX-INVALID-TIME",
+  timestamp: -1,
+  price: 100,
+  volume: 1,
+  eventId: "controller-invalid-time-1"
+});
+
+results.push({
+  test: "Reject invalid timestamp",
+  result:
+    !invalidTimestamp.accepted &&
+    invalidTimestamp.reason === "invalid_timestamp"
+      ? "PASS"
+      : "FAIL",
+  reason: invalidTimestamp.reason
+});
         const passed = results.filter(
           item => item.result === "PASS"
         ).length;
