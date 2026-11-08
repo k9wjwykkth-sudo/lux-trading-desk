@@ -127,11 +127,15 @@ if (liveSignals && liveSignalCount) {
         "Mode: PAPER ONLY";
 
       document.getElementById("decision").textContent =
-        signals > 0 ? "SIGNAL GENERATED" : "WAIT";
+  signals > 0 ? "PAPER SIGNAL · NOT APPROVED" : "WAIT · NO TRADE";
 
-      document.getElementById("decisionText").textContent = report;
-      document.getElementById("chiefStatus").textContent = "PAPER TEST DONE";
-      document.getElementById("chiefStatus").className = "status active";
+document.getElementById("decisionText").textContent =
+  signals > 0
+    ? "Paper signal generated. Awaiting verification and risk approval."
+    : "No actionable paper signal generated.";
+
+document.getElementById("chiefStatus").textContent = "RISK VETO";
+document.getElementById("chiefStatus").className = "status review";
       const entrySignal = signalDetails.find(
   signal => signal.action === "BUY" || signal.action === "SELL"
 );
