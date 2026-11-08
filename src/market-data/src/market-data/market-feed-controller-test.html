@@ -76,6 +76,25 @@
           reason: valid.reason ?? "accepted"
         });
 
+                const marketSelector = document.getElementById("marketSelect");
+        marketSelector.value = "crypto";
+
+        const validCrypto = ingestMarketTick({
+          market: "crypto",
+          instrumentId: "LUX-CRYPTO-CONTROLLER-TEST",
+          timestamp: 1800000003000,
+          price: 100,
+          volume: 1,
+          eventId: "controller-crypto-valid-1"
+        });
+
+        results.push({
+          test: "Accept valid Crypto tick",
+          result: validCrypto.accepted ? "PASS" : "FAIL",
+          reason: validCrypto.reason ?? "accepted"
+        });
+
+        marketSelector.value = "india";
         const wrongMarket = ingestMarketTick({
           market: "crypto",
           instrumentId: "LUX-WRONG-MARKET",
