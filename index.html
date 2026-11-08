@@ -477,6 +477,15 @@ level: 'success'
 });
 </script>
 <script src="https://cdn.socket.io/4.8.4/socket.io.min.js" integrity="sha384-fBrXvbDtHoeKWJ/hcA6M+YGueiDW+h45I7V6F2kD1S8bOkrF9rZYPLVkCR6BLR/1" crossorigin="anonymous"></script>
+ <script>
+  const socketStatus = document.getElementById("socketIoStatus");
+
+  if (typeof window.io === "function") {
+    socketStatus.textContent = "SOCKET.IO: READY";
+  } else {
+    socketStatus.textContent = "SOCKET.IO: NOT LOADED";
+  }
+</script>
   <script type="module" src="./src/market-data/src/market-data/market-feed-controller.js?v=1"></script>
   <script type="module" src="./src/market-data/src/market-data/dashboard-pipeline-demo.js?v=8"></script>
 </body>
