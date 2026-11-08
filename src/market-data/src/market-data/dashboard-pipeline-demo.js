@@ -47,7 +47,7 @@ import("./lux-market-pipeline.js")
           closed += result.closedCandles?.length ?? 0;
           signals += result.actionableSignals?.length ?? 0;
                     signalDetails.push(...(result.actionableSignals || []).map(signal => {
-            console.log("LUX SIGNAL DEBUG:", signal);
+          
             return {
               action: signal.action,
               instrument: signal.instrumentId,
