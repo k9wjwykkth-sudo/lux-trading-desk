@@ -132,10 +132,16 @@ document.getElementById("decisionText").textContent =
 
 document.getElementById("chiefStatus").textContent = "RISK VETO";
 document.getElementById("chiefStatus").className = "status review";
+window.luxPipelineAuditSummary =
+  "PAPER PIPELINE: " + accepted + " accepted ticks, " +
+  rejected + " rejected ticks, " +
+  closed + " closed candles, " +
+  signals + " signals. PAPER ONLY.";
 
 document.getElementById("auditText").textContent =
-  "PAPER PIPELINE: " + signals +
-  " signal(s) generated. Starting eight-agent review...";
+  window.luxPipelineAuditSummary +
+  " Starting eight-agent review...";
+
 
 if (typeof window.runAnalysis === "function") {
   window.runAnalysis();
