@@ -135,8 +135,12 @@ export function runSignalEngineTests() {
       makeCandle("HOLD-TEST", 26 * 60000, result.entryPrice)
     );
 
-    test("Hold position before exit levels",
-      next.action === "HOLD");
+    test(
+  "Prevent duplicate entry while position is open",
+  next.action === "HOLD" &&
+  next.action !== "BUY" &&
+  next.action !== "SELL"
+);
   }
 
   // Stop-loss test
