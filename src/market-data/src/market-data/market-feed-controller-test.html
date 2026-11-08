@@ -123,7 +123,14 @@ results.push({
       : "FAIL",
   reason: malformed.reason
 });
-          market: "crypto",
+          const wrongMarket = ingestMarketTick({
+  market: "crypto",
+  instrumentId: "LUX-WRONG-MARKET",
+  timestamp: 1800000001000,
+  price: 100,
+  volume: 1,
+  eventId: "controller-wrong-1"
+});
           instrumentId: "LUX-WRONG-MARKET",
           timestamp: 1800000001000,
           price: 100,
