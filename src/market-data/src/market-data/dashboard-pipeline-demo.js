@@ -132,9 +132,26 @@ if (liveSignals && liveSignalCount) {
       document.getElementById("decisionText").textContent = report;
       document.getElementById("chiefStatus").textContent = "PAPER TEST DONE";
       document.getElementById("chiefStatus").className = "status active";
-      document.getElementById("entry").textContent = "See notifications";
-      document.getElementById("stop").textContent = "PAPER";
-      document.getElementById("target").textContent = "PAPER";
+      const entrySignal = signalDetails.find(
+  signal => signal.action === "BUY" || signal.action === "SELL"
+);
+
+const exitSignal = signalDetails.find(
+  signal => signal.action === "EXIT"
+);
+
+document.getElementById("entry").textContent =
+  entrySignal ? entrySignal.entry.toFixed(2) : "—";
+
+document.getElementById("stop").textContent =
+  entrySignal ? entrySignal.stopLoss.toFixed(2) : "—";
+
+document.getElementById("target").textContent =
+  entrySignal ? entrySignal.target.toFixed(2) : "—";
+
+if (exitSignal) {
+  console.log("LUX PAPER EXIT:", exitSignal.exit, exitSignal.reason);
+}
 
       const activity = document.getElementById("activity");
 
