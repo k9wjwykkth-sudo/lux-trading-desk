@@ -48,7 +48,7 @@ import("./lux-market-pipeline.js")
           signals += result.actionableSignals?.length ?? 0;
           signalDetails.push(...(result.actionableSignals || []).map(signal => ({
   action: signal.action,
-instrument: signal.instrumentId,
+instrument: signal.instrument,
 side: signal.side,
 entry: signal.entryPrice,
 exit: signal.exitPrice,
