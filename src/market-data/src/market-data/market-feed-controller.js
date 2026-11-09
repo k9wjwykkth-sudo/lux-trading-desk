@@ -1,27 +1,44 @@
 
-
-/**
- * LUX Market Feed Controller
- *
- * Connects a future market-data adapter to the existing
- * candle and signal pipeline.
- *
- * PAPER ONLY — no live orders.
- * No provider connection is active yet.
- */
-
 import { luxMarketPipeline } from "./lux-market-pipeline.js";
+import { createCoinDcxSpotFeed } from "./coindcx-spot-feed.js";
 
 const MARKET_SELECT_ID = "marketSelect";
 
 let selectedMarket = "india";
-let feedStatus = "AWAITING_PROVIDER";
+let feedStatus = "IDLE";
+let feedStatusElement = null;
 
 const SUPPORTED_MARKETS = ["india", "crypto"];
 
-/**
- * Read the market currently selected on the dashboard.
- */
+const coinDcxFeed = createCoinDcxSpotFeed({
+  onTick: (tick) => {
+    const result = ingestMarketTick(tick);
+
+    if (result.accepted) {
+      console.info(
+        "LUX CoinDCX tick accepted:",
+        tick.instrumentId,
+        tick.price
+      );
+    }
+  },
+
+  onStatus: (status) => {
+    feedStatus = status;
+
+    if (selectedMarket !== "crypto") {
+      feedStatus = "IDLE";
+    }
+
+    if (feedStatusElement) {
+      feedStatusElement.textContent =
+        `COINDCX: ${feedStatus}`;
+    }
+
+    console.info("LUX CoinDCX feed:", feedStatus);
+  },
+});
+
 function readSelectedMarket() {
   const selector = document.getElementById(MARKET_SELECT_ID);
 
@@ -32,27 +49,15 @@ function readSelectedMarket() {
   return selectedMarket;
 }
 
-/**
- * Get controller status.
- */
 export function getMarketFeedState() {
   return {
     market: selectedMarket,
     feedStatus,
     mode: "PAPER",
-    providerConnected: false,
+    providerConnected: coinDcxFeed.isConnected(),
   };
 }
 
-/**
- * Receive a normalized tick from a future provider adapter.
- *
- * Required:
- * market, instrumentId, timestamp, price
- *
- * Optional:
- * volume, eventId
- */
 export function ingestMarketTick(tick) {
   readSelectedMarket();
 
@@ -81,9 +86,6 @@ export function ingestMarketTick(tick) {
   return luxMarketPipeline.ingestTick(normalizedTick);
 }
 
-/**
- * Update the selected market when the dashboard selector changes.
- */
 function initializeMarketFeedController() {
   const selector = document.getElementById(MARKET_SELECT_ID);
 
@@ -94,9 +96,25 @@ function initializeMarketFeedController() {
 
   selectedMarket = selector.value;
 
+  feedStatusElement = document.createElement("span");
+  feedStatusElement.className = "pill";
+  feedStatusElement.textContent = "COINDCX: IDLE";
+
+  selector.parentElement.insertBefore(
+    feedStatusElement,
+    selector.nextSibling
+  );
+
   selector.addEventListener("change", () => {
     selectedMarket = selector.value;
-    feedStatus = "AWAITING_PROVIDER";
+
+    if (selectedMarket === "crypto") {
+      coinDcxFeed.start();
+    } else {
+      coinDcxFeed.stop();
+      feedStatus = "IDLE";
+      feedStatusElement.textContent = "COINDCX: IDLE";
+    }
 
     console.info(
       "LUX market changed:",
@@ -108,8 +126,9 @@ function initializeMarketFeedController() {
   console.info(
     "LUX Market Feed Controller ready:",
     selectedMarket,
-    "| Awaiting provider connection"
+    "| PAPER ONLY"
   );
 }
 
 initializeMarketFeedController();
+
