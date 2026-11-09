@@ -1,6 +1,6 @@
 
 import { luxMarketPipeline } from "./lux-market-pipeline.js";
-import { createCoinDcxSpotFeed } from "./coindcx-spot-feed.js";
+import { createCoinDcxSpotFeed } from "./coindcx-spot-feed.js?v=2";
 
 const MARKET_SELECT_ID = "marketSelect";
 
