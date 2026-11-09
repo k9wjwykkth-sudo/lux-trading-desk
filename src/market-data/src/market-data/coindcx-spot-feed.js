@@ -26,7 +26,7 @@ export function createCoinDcxSpotFeed({
     onStatus("CONNECTING");
 
     socket = window.io.connect(SOCKET_ENDPOINT, {
-    
+          transports: ["websocket"],
       reconnection: true,
       reconnectionAttempts: Infinity,
       reconnectionDelay: 1000,
