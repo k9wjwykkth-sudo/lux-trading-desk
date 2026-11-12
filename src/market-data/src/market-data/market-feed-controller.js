@@ -7,14 +7,22 @@ const MARKET_SELECT_ID = "marketSelect";
 let selectedMarket = "india";
 let feedStatus = "IDLE";
 let feedStatusElement = null;
+let pipelineStatsElement = null;
 
 const SUPPORTED_MARKETS = ["india", "crypto"];
+function renderPipelineStats() {
+  if (!pipelineStatsElement) return;
 
+  const stats = luxMarketPipeline.getStats();
+
+  pipelineStatsElement.textContent =
+    `PIPELINE · ACCEPTED ${stats.processedTicks} · REJECTED ${stats.rejectedTicks} · SIGNALS ${stats.generatedSignals}`;
+}
 const coinDcxFeed = createCoinDcxRestFeed({
   onTick: (tick) => {
     const result = ingestMarketTick(tick);
 
-    if (result.accepted) {
+    if (result.accepted) {renderPipelineStats();
       console.info(
         "LUX CoinDCX tick accepted:",
         tick.instrumentId,
@@ -91,6 +99,9 @@ function initializeMarketFeedController() {
 
   if (!selector) {
     console.warn("LUX: Market selector not found.");
+    pipelineStatsElement = document.createElement("span");
+pipelineStatsElement.className = "pill";
+pipelineStatsElement.textContent = "PIPELINE: WAITING FOR TICKS";
     return;
   }
 
@@ -101,6 +112,12 @@ function initializeMarketFeedController() {
   feedStatusElement.textContent = "COINDCX: IDLE";
 
   selector.parentElement.insertBefore(
+    selector.parentElement.insertBefore(
+  pipelineStatsElement,
+  feedStatusElement.nextSibling
+);
+
+renderPipelineStats();
     feedStatusElement,
     selector.nextSibling
   );
