@@ -1,5 +1,5 @@
 
-const TICKER_ENDPOINT = "https://api.coindcx.com/exchange/ticker";
+const TICKER_ENDPOINT = "https://lux-market-relay.lakshayanagarethinam2002.workers.dev/ticker";
 const WATCHED_SYMBOLS = new Set(["BTCUSDT", "ETHUSDT", "SOLUSDT"]);
 const POLL_INTERVAL_MS = 2000;
 
