@@ -41,14 +41,21 @@ export function createCoinDcxSpotFeed({
       });
     });
 
-    socket.on("connect_error", (error) => {
-  const detail = error && error.message
-    ? error.message
-    : String(error || "unknown");
+        socket.on("connect_error", (error) => {
+      const detail = [
+        error?.message || String(error || "unknown"),
+        error?.type ? `type=${error.type}` : "",
+        error?.description?.message
+          ? `description=${error.description.message}`
+          : "",
+        error?.context?.readyState !== undefined
+          ? `readyState=${error.context.readyState}`
+          : "",
+      ].filter(Boolean).join(" | ");
 
-  onStatus(`CONNECTION_ERROR: ${detail}`);
-  console.error("LUX CoinDCX connection error:", error);
-});
+      onStatus(`CONNECTION_ERROR: ${detail}`);
+      console.error("LUX CoinDCX connection error:", error);
+    });
 
     socket.on("disconnect", () => {
       onStatus("DISCONNECTED");
