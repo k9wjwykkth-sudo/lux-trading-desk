@@ -1,5 +1,5 @@
 
-import { luxMarketPipeline } from "./lux-market-pipeline.js";
+import { createCoinDcxRestFeed } from "./coindcx-rest-feed.js?v=1";
 import { createCoinDcxSpotFeed } from "./coindcx-spot-feed.js?v=5";
 
 const MARKET_SELECT_ID = "marketSelect";
@@ -10,7 +10,7 @@ let feedStatusElement = null;
 
 const SUPPORTED_MARKETS = ["india", "crypto"];
 
-const coinDcxFeed = createCoinDcxSpotFeed({
+const coinDcxFeed = createCoinDcxRestFeed({
   onTick: (tick) => {
     const result = ingestMarketTick(tick);
 
