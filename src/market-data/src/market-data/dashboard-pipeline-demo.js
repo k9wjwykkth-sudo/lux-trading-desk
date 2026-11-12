@@ -9,7 +9,7 @@ if (topRight) {
   topRight.appendChild(button);
 }
 
-import("./market-feed-controller.js")
+import("./market-feed-controller.js?v=5")
   .then(({ ingestMarketTick }) => {
 
     button.addEventListener("click", () => {
